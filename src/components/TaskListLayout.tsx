@@ -1,15 +1,36 @@
 import { motion } from "motion/react";
-import type { TasksLayoutType } from "../types/MyCustomTypes";
+import type {
+  TasksLayoutType,
+  UsersResponseType,
+} from "../types/MyCustomTypes";
 import { useState } from "react";
 
 const TaskListLayout = ({
   filteredTasks,
   handleTaskCompletion,
+  fetchedUsers,
+  filterByUserId,
+  setFilterByUserId,
   limit,
-  handleLimitChange,
+  setLimitChange: handleLimitChange,
   listTitle,
 }: TasksLayoutType) => {
   const [hoveredTaskId, setHoveredTaskId] = useState<number | null>(null);
+
+  const [selectedSort, setSelectedSort] = useState("asc");
+
+  const filteredTasksByUserId = filterByUserId
+    ? filteredTasks.filter((task) => task.userId === filterByUserId)
+    : filteredTasks;
+
+  const finalTasks =
+    selectedSort === "asc"
+      ? filteredTasksByUserId.sort((a, b) => a.title.localeCompare(b.title))
+      : filteredTasksByUserId.sort((a, b) => b.title.localeCompare(a.title));
+
+  const handleUserIdFiltration = (userId: number) => {
+    setFilterByUserId(userId);
+  };
 
   const handleMouseEnter = (taskId: number) => {
     setHoveredTaskId(taskId);
@@ -38,27 +59,41 @@ const TaskListLayout = ({
           {/* Show different dropdown menus for different TaskLists */}
           {listTitle !== "Completed" ? (
             <>
+              <p>Filter By Username: </p>
+              <select
+                onChange={(e) => handleUserIdFiltration(Number(e.target.value))}
+                className="outline rounded"
+              >
+                <option value="0">All</option>
+                {fetchedUsers.map((user: UsersResponseType) => (
+                  <option value={user.id} key={user.id}>
+                    {user.name}
+                  </option>
+                ))}
+              </select>
               <p>Sort: </p>
-              <select className="outline rounded">
-                <option value="asc">Ascending</option>
-
-                <option value="desc">Descending</option>
+              <select
+                onChange={(e) => setSelectedSort(e.target.value)}
+                className="outline rounded"
+              >
+                <option value="asc">Asc.</option>
+                <option value="desc">Desc.</option>
               </select>
             </>
           ) : (
             <>
               <p>Date Sort: </p>
               <select className="outline rounded">
-                <option value="date-asc">Date: Ascending</option>
+                <option value="date-asc">Date: Asc.</option>
 
-                <option value="date-desc">Date: Descending</option>
+                <option value="date-desc">Date: Desc.</option>
               </select>
             </>
           )}
         </div>
 
         {/* Dynamically set limit of tasks, based on the show more button */}
-        {filteredTasks.slice(0, limit).map((task) => (
+        {finalTasks.slice(0, limit).map((task) => (
           <li
             key={task.id}
             className="flex flex-row justify-between items-center mb-4 p-4 border-solid border-2 border-gray-200 rounded-lg"

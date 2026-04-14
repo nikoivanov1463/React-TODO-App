@@ -11,8 +11,8 @@ const TaskProvider = ({ children }: { children: ReactNode }) => {
   const [fetchedTasks, setFetchedTasks] = useState<TasksResponseType[]>([]);
 
   const fetchAll = async () => {
-    const res = await fetch("https://jsonplaceholder.typicode.com/todos");
-    const data = await res.json();
+    const response = await fetch("https://jsonplaceholder.typicode.com/todos");
+    const data = await response.json();
 
     setFetchedTasks(data);
   };

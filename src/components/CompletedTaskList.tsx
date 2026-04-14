@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useTasks } from "../customHooks/TaskContextHook";
 import type { TasksResponseType } from "../types/MyCustomTypes";
 import TaskListLayout from "./TaskListLayout";
+import { useUsers } from "../customHooks/UserContextHook";
 
 const CompletedTaskList = () => {
   const { fetchedTasks, toggleTask } = useTasks();
+  const { fetchedUsers, filterByUserId, setFilterByUserId } = useUsers();
 
   const [completedTasksLimit, setCompletedTasksLimit] = useState(10);
 
@@ -16,8 +18,11 @@ const CompletedTaskList = () => {
     <TaskListLayout
       filteredTasks={filteredPendingTasks}
       handleTaskCompletion={toggleTask}
+      fetchedUsers={fetchedUsers}
+      filterByUserId={filterByUserId}
+      setFilterByUserId={setFilterByUserId}
       limit={completedTasksLimit}
-      handleLimitChange={setCompletedTasksLimit}
+      setLimitChange={setCompletedTasksLimit}
       listTitle="Completed"
     />
   );
