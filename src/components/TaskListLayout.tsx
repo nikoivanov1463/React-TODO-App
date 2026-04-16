@@ -50,60 +50,65 @@ const TaskListLayout = ({
   };
 
   return (
-    <div className="flex flex-col bg-white shadow-xl shadow-gray-200/50 border border-gray-100 p-4 md:p-8 rounded-3xl w-full">
+    <div className="w-full max-w-4xl mx-auto bg-white border border-gray-200 rounded-2xl shadow-sm p-5 md:p-10">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col"
+        transition={{ duration: 0.4 }}
       >
         {/* HEADER */}
-        <div className="flex flex-row flex-wrap items-center justify-between gap-6 mb-10">
-          <h2 className="text-3xl font-black text-gray-800 tracking-tight min-w-[200px]">
-            {listTitle} <span className="text-gray-300 font-light">Tasks</span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8 border-b border-gray-50 pb-6">
+          <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
+            {listTitle} <span className="text-gray-400 font-medium">Tasks</span>
           </h2>
 
-          <div className="flex flex-row flex-wrap items-center gap-4">
-            {listTitle !== "Completed" ? (
-              <div className="flex flex-row flex-wrap items-center gap-3">
-                <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-xl border border-gray-100 flex-shrink-0">
-                  <label className="text-xs font-bold text-gray-400 uppercase">
-                    User
-                  </label>
-                  <select
-                    onChange={(e) =>
-                      handleUserIdFiltration(Number(e.target.value))
-                    }
-                    className="bg-transparent outline-none cursor-pointer font-bold text-gray-700 text-sm"
-                  >
-                    <option value="0">All</option>
-                    {fetchedUsers.map((user: UsersResponseType) => (
-                      <option value={user.id} key={user.id}>
-                        {user.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+          <div className="flex flex-wrap items-center gap-3">
+            {/* User Filter - Shows only in the pending list */}
+            {listTitle !== "Completed" && (
+              <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                  User
+                </label>
+                <select
+                  onChange={(e) =>
+                    handleUserIdFiltration(Number(e.target.value))
+                  }
+                  className="bg-transparent outline-none cursor-pointer font-semibold text-gray-700 text-xs"
+                >
+                  <option value="0">All</option>
+                  {fetchedUsers.map((user: UsersResponseType) => (
+                    <option value={user.id} key={user.id}>
+                      {user.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
-                <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-xl border border-gray-100 flex-shrink-0">
-                  <label className="text-xs font-bold text-gray-400 uppercase">
-                    Sort
-                  </label>
-                  <select
-                    onChange={(e) => setSelectedSort(e.target.value)}
-                    className="bg-transparent outline-none cursor-pointer font-bold text-gray-700 text-sm"
-                  >
-                    <option value="asc">Asc.</option>
-                    <option value="desc">Desc.</option>
-                  </select>
-                </div>
+            {/* Sort Filter */}
+            {listTitle === "Completed" ? (
+              <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                  Date sort:
+                </label>
+                {/* TODO: Complete */}
+                <select
+                  onChange={() => null}
+                  className="bg-transparent outline-none cursor-pointer font-semibold text-gray-700 text-xs"
+                >
+                  <option value="asc">Asc.</option>
+                  <option value="desc">Desc.</option>
+                </select>
               </div>
             ) : (
-              <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  Date Sort:
+              <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                  Sort:
                 </label>
-                <select className="bg-transparent outline-none cursor-pointer font-bold text-gray-700 text-sm">
+                <select
+                  onChange={(e) => setSelectedSort(e.target.value)}
+                  className="bg-transparent outline-none cursor-pointer font-semibold text-gray-700 text-xs"
+                >
                   <option value="asc">Asc.</option>
                   <option value="desc">Desc.</option>
                 </select>
@@ -113,65 +118,64 @@ const TaskListLayout = ({
         </div>
 
         {/* LIST SECTION */}
-        <ul className="flex flex-col gap-4">
+        <ul className="space-y-3">
           {/* Dynamically set limit of tasks, based on the show more button */}
           {finalTasks.slice(0, limit).map((task) => (
             <motion.li
               layout
               key={task.id}
-              className="flex flex-row flex-wrap sm:flex-nowrap items-center justify-between gap-4 p-5 bg-white border border-gray-100 rounded-2xl hover:border-gray-200 hover:shadow-md transition-all duration-200"
+              className="group flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl hover:border-blue-200 hover:shadow-sm transition-colors transition-shadow duration-200"
             >
-              <div className="flex-1 min-w-[250px] flex flex-col gap-1">
-                <h3 className="text-lg font-bold text-gray-700 leading-tight break-words">
+              <div className="flex flex-col gap-1 pr-4">
+                <h3 className="text-[15px] font-semibold text-gray-800 leading-snug">
                   {task.title.charAt(0).toUpperCase() + task.title.slice(1)}
                 </h3>
-                {task.completed && task.date && (
-                  <div className="flex items-center gap-2">
-                    <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    <span className="text-[11px] font-bold text-gray-400 uppercase tracking-tighter">
-                      Completed: {task.date}
+                {task.completed && (
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">
+                      Done {task.date && `• ${task.date}`}
                     </span>
                   </div>
                 )}
               </div>
 
-              <div className="flex-shrink-0 w-full sm:w-auto flex justify-end">
-                <button
-                  onMouseEnter={() => handleMouseEnter(task.id)}
-                  onMouseLeave={handleMouseLeave}
-                  onClick={() => handleButtonClick(task.id)}
-                  className={`
-                    flex items-center justify-center
-                    rounded-full px-8 py-3 text-sm font-black text-white 
-                    transition-all duration-300 shadow-lg active:scale-95
-                    w-full sm:w-40 h-12 flex-shrink-0 cursor-pointer
-                    ${task.completed ? "bg-green-500 hover:bg-orange-500 shadow-green-100" : "bg-red-500 hover:bg-green-600 shadow-red-100"}
-                  `}
-                >
-                  {hoveredTaskId === task.id
-                    ? task.completed
-                      ? "Undo?"
-                      : "Complete?"
-                    : task.completed
-                      ? "Done"
-                      : "Pending"}
-                </button>
-              </div>
+              <button
+                onMouseEnter={() => handleMouseEnter(task.id)}
+                onMouseLeave={handleMouseLeave}
+                onClick={() => handleButtonClick(task.id)}
+                className={`
+              shrink-0 px-5 py-2 w-30 rounded-lg text-xs font-bold transition-all duration-200 active:scale-95 cursor-pointer
+              ${
+                task.completed
+                  ? "bg-green-50 text-green-600 hover:bg-yellow-50 hover:text-yellow-600"
+                  : "bg-red-50 text-red-600 hover:bg-green-50  hover:text-green-600"
+              }
+            `}
+              >
+                {hoveredTaskId === task.id
+                  ? task.completed
+                    ? "Undo?"
+                    : "Complete?"
+                  : task.completed
+                    ? "Completed"
+                    : "Pending"}
+              </button>
             </motion.li>
           ))}
         </ul>
 
         {/* FOOTER */}
-        <div className="flex justify-center mt-10">
+        <div className="flex justify-center mt-8">
           {filteredTasks.length > limit ? (
             <button
-              className="bg-gray-800 text-white px-10 py-4 rounded-2xl font-bold text-sm hover:bg-black transition-all shadow-xl active:scale-95 cursor-pointer"
+              className="text-sm font-bold text-gray-500 hover:text-gray-900 hover:bg-gray-100 px-6 py-2.5 rounded-xl transition-all cursor-pointer"
               onClick={() => handleLimitChange(limit + 10)}
             >
               Load More Tasks
             </button>
           ) : (
-            <span className="text-gray-300 text-xs font-medium uppercase tracking-[0.2em]">
+            <span className="text-gray-300 text-[10px] font-bold uppercase tracking-[0.2em]">
               End of list
             </span>
           )}
