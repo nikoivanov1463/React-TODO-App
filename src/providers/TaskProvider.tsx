@@ -14,17 +14,35 @@ const TaskProvider = ({ children }: { children: ReactNode }) => {
     const response = await fetch("https://jsonplaceholder.typicode.com/todos");
     const data = await response.json();
 
-    setFetchedTasks(data);
+    /* Set the property of all already completed tasks to yesterday */
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const tasksWithSetDate = data.map((task: TasksResponseType) => ({
+      ...task,
+      date: task.completed ? yesterday.toDateString() : null,
+    }));
+
+    setFetchedTasks(tasksWithSetDate);
   };
 
   useEffect(() => {
     fetchAll();
   }, []);
 
+  {
+    /* Toggle certain selected uncompleted task to completed with current date */
+  }
   const toggleTask = (id: number) => {
     setFetchedTasks((allPrevFetchedTasks) =>
       allPrevFetchedTasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task,
+        task.id === id
+          ? {
+              ...task,
+              completed: !task.completed,
+              date: new Date().toDateString(),
+            }
+          : task,
       ),
     );
   };

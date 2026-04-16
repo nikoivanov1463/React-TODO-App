@@ -9,6 +9,7 @@ export type TasksResponseType = {
   id: number;
   title: string;
   completed: boolean;
+  date: string;
 };
 
 export type TaskContextType = {
