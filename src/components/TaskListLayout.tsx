@@ -19,19 +19,31 @@ const TaskListLayout = ({
 
   const [selectedSort, setSelectedSort] = useState("asc");
 
+  const [dateSort, setDateSort] = useState("desc");
+
   const filteredTasksByUserId = filterByUserId
     ? filteredTasks.filter((task) => task.userId === filterByUserId)
     : filteredTasks;
 
   {
-    /* Only sort tasks that belong in the pending list */
+    /* Only sort tasks that belong in the pending list by title, else if in completed list by date */
   }
-  const finalTasks =
-    listTitle === "Pending"
-      ? selectedSort === "asc"
-        ? filteredTasksByUserId.sort((a, b) => a.title.localeCompare(b.title))
-        : filteredTasksByUserId.sort((a, b) => b.title.localeCompare(a.title))
-      : filteredTasksByUserId;
+  const finalTasks = [...filteredTasksByUserId].sort((a, b) => {
+    if (listTitle === "Completed") {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+
+      return dateSort === "asc" ? dateA - dateB : dateB - dateA;
+    } else {
+      return selectedSort === "asc"
+        ? a.title.localeCompare(b.title)
+        : b.title.localeCompare(a.title);
+    }
+  });
+
+  const handleDateSorting = (sortingType: string) => {
+    setDateSort(sortingType);
+  };
 
   const handleUserIdFiltration = (userId: number) => {
     setFilterByUserId(userId);
@@ -66,7 +78,7 @@ const TaskListLayout = ({
             {/* User Filter - Shows only in the pending list */}
             {listTitle !== "Completed" && (
               <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                <label className="text-[0.5rem] font-bold text-gray-400 uppercase tracking-wider">
                   User
                 </label>
                 <select
@@ -88,29 +100,29 @@ const TaskListLayout = ({
             {/* Sort Filter */}
             {listTitle === "Completed" ? (
               <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                <label className="text-[0.5rem] font-bold text-gray-400 uppercase tracking-wider">
                   Date sort:
                 </label>
                 {/* TODO: Complete */}
                 <select
-                  onChange={() => null}
+                  onChange={(e) => handleDateSorting(e.target.value)}
                   className="bg-transparent outline-none cursor-pointer font-semibold text-gray-700 text-xs"
                 >
-                  <option value="asc">Asc.</option>
                   <option value="desc">Desc.</option>
+                  <option value="asc">Asc.</option>
                 </select>
               </div>
             ) : (
               <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                <label className="text-[0.5rem] font-bold text-gray-400 uppercase tracking-wider">
                   Sort:
                 </label>
                 <select
                   onChange={(e) => setSelectedSort(e.target.value)}
                   className="bg-transparent outline-none cursor-pointer font-semibold text-gray-700 text-xs"
                 >
-                  <option value="asc">Asc.</option>
-                  <option value="desc">Desc.</option>
+                  <option value="asc">A-Z</option>
+                  <option value="desc">Z-A</option>
                 </select>
               </div>
             )}
@@ -127,13 +139,13 @@ const TaskListLayout = ({
               className="group flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl hover:border-blue-200 hover:shadow-sm transition-colors transition-shadow duration-200"
             >
               <div className="flex flex-col gap-1 pr-4">
-                <h3 className="text-[15px] font-semibold text-gray-800 leading-snug">
+                <h3 className="text-1 font-semibold text-gray-800 leading-snug">
                   {task.title.charAt(0).toUpperCase() + task.title.slice(1)}
                 </h3>
                 {task.completed && (
                   <div className="flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">
+                    <span className="text-[0.5rem] font-bold text-gray-400 uppercase tracking-tight">
                       Done {task.date && `• ${task.date}`}
                     </span>
                   </div>
@@ -175,7 +187,7 @@ const TaskListLayout = ({
               Load More Tasks
             </button>
           ) : (
-            <span className="text-gray-300 text-[10px] font-bold uppercase tracking-[0.2em]">
+            <span className="text-gray-300 text-[0.8rem] font-bold uppercase tracking-[0.2em]">
               End of list
             </span>
           )}
