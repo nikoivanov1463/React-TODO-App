@@ -6,7 +6,7 @@ A responsive Todo application built with React using Tailwind CSS, with user pre
 
 ## 📸 Screenshots of the app
 
-![Application Main View](./src/images/main-app.png)
+![Application Main View](https://imagur.org/i/PMQprUHV)
 _The main page featuring the Pending and Completed task lists._
 
 ---
